@@ -1,20 +1,23 @@
 import math
 
 import wpilib
-import ctre
+import ctre # the wpilib library doesn't include some electrioncal component, such as talons, that the ctre library does 
 
-from common.motion_profiles import MotionProfile, ProfileExecutor
-from common.pid import PIDCoefficients
+# we are using motion profiling and PID loops that we set up in other files (in the common folder)
+from common.motion_profiles import MotionProfile, ProfileExecutor 
+from common.pid import PIDCoefficients 
 
-# Only the Drivetrain needs to be used outside of this module,
+??? # Only the Drivetrain needs to be used outside of this module,
 #  if we need to expose something else later we can
 __all__ = ["Drivetrain"]
 
 
 class Drivetrain:
+    """sets up the electrical components, like the drive train, gyro and talons, and their starting values"""
     robot_drive = wpilib.RobotDrive
     gyro = wpilib.ADXRS450_Gyro
     fl_motor = ctre.CANTalon
+    # Talons control the motor's speed and position
 
     def __init__(self):
         self.rotation = 0
