@@ -1,8 +1,4 @@
-'''This module provide functionality related to PID controllers
-
-namedtuple for stroing PID coefficients
-PID controller object
-'''
+"""PID control of motors and other output"""
 
 from typing import NamedTuple
 
@@ -11,14 +7,14 @@ from utils import clamp
 
 
 class PIDCoefficients(NamedTuple):
-    '''Coefficients for PID controller'''
+    """Coefficients for PID controller"""
     p: float
     i: float
     d: float
 
 
 class PIDController:
-    '''PID controller for a process.
+    """PID controller for a process.
 
     See https://en.wikipedia.org/wiki/PID_controller for
     overview/control algorithm
@@ -27,7 +23,7 @@ class PIDController:
     ranges. For example, controlling motor speed is a
     non-continuous process, while position of a motor would be
     continuous as the position "wraps around" at some point.
-    '''
+    """
 
     def __init__(self,
                  pid_coefs: PIDCoefficients,
@@ -36,7 +32,7 @@ class PIDController:
                  input_max: float = None,
                  input_min: float = None,
                  continuous: bool = False):
-        '''PID controller constructor
+        """PID controller constructor
 
         p:
             Proportional coefficient
@@ -49,7 +45,7 @@ class PIDController:
         min_input, max_input:
             Set min/max of the setpoint/input range, only
             needed if continuous is set to True
-        '''
+        """
 
         # PID control coefficients
         self._coefs = pid_coefs
@@ -71,13 +67,13 @@ class PIDController:
         self._output_min = output_min
 
     def get_output(self, current_input: float, setpoint: float) -> float:
-        '''Get PID output for process
+        """Get PID output for process
 
         current_input:
             The current PID input
         setpoint:
             Desired output of process/input to PID
-        '''
+        """
 
         # Current time in seconds
         current_time = Timer.getFPGATimestamp()
@@ -107,11 +103,11 @@ class PIDController:
         return clamp(output, self._output_max, self._output_min)
 
     def reset(self):
-        '''Reset internal control variables
+        """Reset internal control variables
 
         Should be used if the PID is disabled for a time,
         then re-enabled.
-        '''
+        """
         self._previous_input = 0.0
         self._integral_term = 0.0
         self._previous_time = 0.0
