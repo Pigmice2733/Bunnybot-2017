@@ -4,7 +4,6 @@ from components.drivetrain import Drivetrain
 
 class Forward(AutonomousStateMachine):
     MODE_NAME = "Forward"
-    DEFAULT = True
 
     drivetrain = Drivetrain
 

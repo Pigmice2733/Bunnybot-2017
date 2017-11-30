@@ -56,7 +56,7 @@ class Drivetrain:
 
         self.profile_arguments = distance
 
-        motion_profile = MotionProfile.generate_motion_profile(
+        motion_profile = MotionProfile(
             acceleration_time=1,
             deceleration_time=1,
             max_speed=1,
@@ -108,7 +108,7 @@ class Drivetrain:
 
         self.profile_arguments = radians
 
-        motion_profile = MotionProfile.generate_motion_profile(
+        motion_profile = MotionProfile(
             acceleration_time=1,
             deceleration_time=1,
             max_speed=0.6,

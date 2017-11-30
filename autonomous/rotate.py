@@ -4,6 +4,7 @@ from components.drivetrain import Drivetrain
 
 class Rotate(AutonomousStateMachine):
     MODE_NAME = "Rotate"
+    DEFAULT = True
 
     drivetrain = Drivetrain
 
