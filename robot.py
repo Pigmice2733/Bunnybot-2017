@@ -16,6 +16,9 @@ class Robot(MagicRobot):
     flipper = Flipper
 
     def createObjects(self):
+        """ 
+        f = front, b = back. r = right, l = left
+        """
         self.fl_motor = CANTalon(0)
         self.fr_motor = CANTalon(1)
         self.bl_motor = CANTalon(2)
@@ -52,3 +55,4 @@ class Robot(MagicRobot):
 
 if __name__ == '__main__':
     wpilib.run(Robot)
+    
