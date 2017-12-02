@@ -3,14 +3,31 @@
     "robot": {
       "w": 3,
       "h": 2,
-      "starting_x": 25,
-      "starting_y": 15,
+      "starting_x": 2,
+      "starting_y": 13.5,
       "starting_angle": 0
+    },
+    "CAN": {
+      "1": "Front Left",
+      "2": "Back Left",
+      "3": "Front Right",
+      "4": "Back Right"
     },
     "field": {
       "w": 54,
       "h": 27,
-      "px_per_ft": 14
+      "px_per_ft": 13,
+      "objects": [ 
+        {
+          "color": "black",
+          "points": [
+            [26.95, 0],
+            [26.95, 27],
+            [27.05, 27],
+            [27.05, 0]
+          ]
+        }
+      ]
     }
   }
 }
