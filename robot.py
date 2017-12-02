@@ -4,8 +4,8 @@ import wpilib
 from ctre.cantalon import CANTalon
 from magicbot import MagicRobot
 
-from components.drivetrain import Drivetrain
 from components.bunnygrabber import BunnyGrabber
+from components.drivetrain import Drivetrain
 from components.flipper import Flipper
 
 
@@ -16,19 +16,20 @@ class Robot(MagicRobot):
     flipper = Flipper
 
     def createObjects(self):
-        """ 
-        f = front, b = back. r = right, l = left
-        """
-        self.fl_motor = CANTalon(0)
-        self.fr_motor = CANTalon(1)
-        self.bl_motor = CANTalon(2)
-        self.br_motor = CANTalon(3)
+        self.front_left_motor = CANTalon(1)
+        self.back_left_motor = CANTalon(2)
+        self.front_right_motor = CANTalon(3)
+        self.back_right_motor = CANTalon(4)
 
-        self.robot_drive = wpilib.RobotDrive(
-            self.fl_motor,
-            self.fr_motor,
-            self.bl_motor,
-            self.br_motor)
+        self.back_left_motor.setControlMode(CANTalon.ControlMode.Follower)
+        self.back_right_motor.setControlMode(CANTalon.ControlMode.Follower)
+
+        self.back_left_motor.set(self.front_left_motor.getDeviceID())
+        self.back_right_motor.set(self.front_right_motor.getDeviceID())
+
+        self.robot_drive = wpilib.RobotDrive(self.front_left_motor,
+                                             self.front_right_motor)
+
         self.drivetrain_gyro = wpilib.ADXRS450_Gyro()
         self.bunny_motor = wpilib.Talon(0)
 
@@ -55,4 +56,3 @@ class Robot(MagicRobot):
 
 if __name__ == '__main__':
     wpilib.run(Robot)
-    

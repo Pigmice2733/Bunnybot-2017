@@ -1,7 +1,7 @@
 import math
 
-import wpilib
 import ctre
+import wpilib
 
 from common.motion_profiles import MotionProfile, ProfileExecutor
 from common.pid import PIDCoefficients
@@ -14,7 +14,7 @@ __all__ = ["Drivetrain"]
 class Drivetrain:
     robot_drive = wpilib.RobotDrive
     gyro = wpilib.ADXRS450_Gyro
-    fl_motor = ctre.CANTalon
+    front_left_motor = ctre.CANTalon
 
     def __init__(self):
         self.rotation = 0
@@ -68,8 +68,7 @@ class Drivetrain:
         self._reset_encoder_position()
 
         self.profile_executor = ProfileExecutor(
-            coefs, motion_profile,
-            lambda: self._get_encoder_position() / 1023,
+            coefs, motion_profile, lambda: self._get_encoder_position() / 1023,
             lambda output: self.forward_at(-output), 0.08)
 
         return False
@@ -118,10 +117,8 @@ class Drivetrain:
 
         coefs = PIDCoefficients(p=1.0, i=0.1, d=0.0)
         self.profile_executor = ProfileExecutor(
-            coefs, motion_profile,
-            lambda: self._get_gyro_angle(),
-            lambda output: self.turn_at(output), 0.001
-        )
+            coefs, motion_profile, lambda: self._get_gyro_angle(),
+            lambda output: self.turn_at(output), 0.001)
 
         return False
 
@@ -136,10 +133,10 @@ class Drivetrain:
         self.forward_speed = 0
 
     def _reset_encoder_position(self):
-        self.fl_motor.setEncPosition(0)
+        self.front_left_motor.setEncPosition(0)
 
     def _get_encoder_position(self):
-        return -self.fl_motor.getPosition()
+        return -self.front_left_motor.getPosition()
 
     def _zero_gyro(self):
         self.gyro_offset = self.gyro.getAngle()
