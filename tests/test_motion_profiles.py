@@ -9,8 +9,8 @@ class TestMotionProfile:
     """Test class for MotionProfile"""
 
     def create_test_profile(acceleration, deceleration, max_speed,
-                            acceleration_time, deceleration_time,
-                            end_time, reverse):
+                            acceleration_time, deceleration_time, end_time,
+                            reverse):
         profile = MotionProfile(1, 1, 1, 5)
         profile.acceleration = acceleration
         profile.acceleration_end_time = acceleration_time
@@ -39,27 +39,25 @@ class TestMotionProfile:
             2, -3, 6, 3, 4.5, 6.5, False)
         generated_motion_profile = MotionProfile(3, 2, 6, 24)
 
-        TestMotionProfile.approx_equal(
-            correct_motion_profile, generated_motion_profile)
+        TestMotionProfile.approx_equal(correct_motion_profile,
+                                       generated_motion_profile)
 
     def test_generate_motion_profile_no_max_speed(self):
         """Test MotionProfile.generate_motion_profile() where
          the robot should never reach reach max speed - triangular"""
         correct_motion_profile = TestMotionProfile.create_test_profile(
             1.5, -1.2, 4.5, 3, 3, 6.75, False)
-        generated_motion_profile = MotionProfile(
-            4, 5, 6, 15.1875)
+        generated_motion_profile = MotionProfile(4, 5, 6, 15.1875)
 
-        TestMotionProfile.approx_equal(
-            correct_motion_profile, generated_motion_profile)
+        TestMotionProfile.approx_equal(correct_motion_profile,
+                                       generated_motion_profile)
 
         correct_motion_profile = TestMotionProfile.create_test_profile(
             2, -2.15, 8.6, 4.3, 4.3, 8.3, False)
-        generated_motion_profile = MotionProfile(
-            4.5, 9 / (2.15), 9, 35.69)
+        generated_motion_profile = MotionProfile(4.5, 9 / (2.15), 9, 35.69)
 
-        TestMotionProfile.approx_equal(
-            correct_motion_profile, generated_motion_profile)
+        TestMotionProfile.approx_equal(correct_motion_profile,
+                                       generated_motion_profile)
 
     def test_position_calculations_trapezoid(self):
         """Test MotionProfile position() for a trapezoidal profile"""

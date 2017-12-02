@@ -4,12 +4,12 @@
 This is useful for testing to see the big picture
  view of the MotionProfile
 """
-import os
 import errno
+import os
 
-import matplotlib.pyplot
 import numpy
 
+import matplotlib.pyplot
 from motion_profiles import MotionProfile
 
 
@@ -50,6 +50,5 @@ if __name__ == "__main__":
     plot_profile(triangular_profile, 'profiles/triangular_profile.png')
     trapezoidal_profile = MotionProfile.generate_motion_profile(3, 2, 6, 24)
     plot_profile(trapezoidal_profile, 'profiles/trapezoidal_profile.png')
-    negative_profile = MotionProfile.generate_motion_profile(
-        4.5, 4, 9, -30)
+    negative_profile = MotionProfile.generate_motion_profile(4.5, 4, 9, -30)
     plot_profile(negative_profile, 'profiles/negative_profile.png')

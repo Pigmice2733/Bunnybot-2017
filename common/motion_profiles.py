@@ -110,9 +110,9 @@ class MotionProfile:
 
         # Max speed phase - time is clamped between 0 and time change between
         #  acceleration and deceleration
-        max_speed_phase_time = max(
-            0, min(time, self.deceleration_start_time) -
-            self.acceleration_end_time)
+        max_speed_phase_time = max(0,
+                                   min(time, self.deceleration_start_time) -
+                                   self.acceleration_end_time)
         position += max_speed_phase_time * self.max_speed
 
         # Deceleration phase - time is clamped between zero and the time
@@ -128,11 +128,10 @@ class MotionProfile:
 
 
 class ProfileExecutor:
-    def __init__(self, pid_coefs: PIDCoefficients,
-                 motion_profile: MotionProfile,
-                 input_source: Callable[[], float],
-                 output: Callable[[float], None],
-                 acceptable_error_margin: float):
+    def __init__(
+            self, pid_coefs: PIDCoefficients, motion_profile: MotionProfile,
+            input_source: Callable[[], float], output: Callable[[float], None],
+            acceptable_error_margin: float):
         """Wrapper for a PID controller and a motion profile. Ties
          them together for seemless profile execution
 
