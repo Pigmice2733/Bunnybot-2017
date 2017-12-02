@@ -22,6 +22,7 @@ class Drivetrain:
         self.gyro_offset = 0.0
         self.profile_executor = None
         self.profile_arguments = None
+        self.wheel_circumference_meters = 0.48
 
     def forward_at(self, speed):
         self.forward_speed = speed
@@ -59,7 +60,7 @@ class Drivetrain:
         motion_profile = MotionProfile(
             acceleration_time=1,
             deceleration_time=1,
-            max_speed=1,
+            max_speed=1.2,
             target_distance=distance)
 
         coefs = PIDCoefficients(p=1.0, i=0.0, d=0.0)
@@ -68,7 +69,8 @@ class Drivetrain:
         self._reset_encoder_position()
 
         self.profile_executor = ProfileExecutor(
-            coefs, motion_profile, lambda: self._get_encoder_position() / 1023,
+            coefs, motion_profile,
+            lambda: self._get_encoder_position() * self.wheel_circumference_meters,
             lambda output: self.forward_at(-output), 0.08)
 
         return False
@@ -136,7 +138,8 @@ class Drivetrain:
         self.front_left_motor.setEncPosition(0)
 
     def _get_encoder_position(self):
-        return -self.front_left_motor.getPosition()
+        edges_per_revolution = 4
+        return -self.front_left_motor.getEncPosition() / edges_per_revolution
 
     def _zero_gyro(self):
         self.gyro_offset = self.gyro.getAngle()

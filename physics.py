@@ -15,10 +15,15 @@ class PhysicsEngine:
         front_left = hal_data['CAN'][1]['value']
         front_right = -hal_data['CAN'][3]['value']
 
-        self.encoder_position += front_left * tm_diff
+        # CAN outputs to the hal are multiplied by the duty cycle, 1023
+        talon_duty_cycle = 1023
+        # Quadrature encoders have 4 edges per revolution
+        edges_per_revolution = 4
+        position_change = (front_left / talon_duty_cycle) * tm_diff
+        self.encoder_position += position_change * edges_per_revolution
 
-        hal_data['CAN'][1]['enc_position'] += hal_data['CAN'][1]['value'] / \
-            1023 * tm_diff * 5000
+        # Scale encoder value for sim
+        hal_data['CAN'][1]['enc_position'] = 9.98 * self.encoder_position
 
         rotation, speed = two_motor_drivetrain(front_left, front_right, 3,
                                                0.025)
