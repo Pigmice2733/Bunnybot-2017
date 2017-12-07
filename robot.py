@@ -7,6 +7,7 @@ from magicbot import MagicRobot
 from components.bunnygrabber import BunnyGrabber
 from components.drivetrain import Drivetrain
 from components.flipper import Flipper
+from components.arm import Arm
 
 
 class Robot(MagicRobot):
@@ -14,8 +15,10 @@ class Robot(MagicRobot):
     drivetrain = Drivetrain
     bunnygrabber = BunnyGrabber
     flipper = Flipper
+    arm = Arm
 
     def createObjects(self):
+        # Drivetrain
         self.front_left_motor = CANTalon(1)
         self.back_left_motor = CANTalon(2)
         self.front_right_motor = CANTalon(3)
@@ -30,11 +33,17 @@ class Robot(MagicRobot):
         self.robot_drive = wpilib.RobotDrive(self.front_left_motor,
                                              self.front_right_motor)
 
+        # Arm
+        self.extended_limit_switch = wpilib.DigitalInput(0)
+        self.retracted_limit_switch = wpilib.DigitalInput(1)
+        self.arm_motor = CANTalon(5)
+
         self.drivetrain_gyro = wpilib.ADXRS450_Gyro()
         self.bunny_motor = wpilib.Talon(0)
 
         self.flipper_motor = wpilib.Talon(1)
 
+        # Joysticks
         self.drive_joystick = wpilib.Joystick(0)
         self.operator_joystick = wpilib.Joystick(1)
 
@@ -52,6 +61,11 @@ class Robot(MagicRobot):
             self.flipper.turn_on()
         else:
             self.flipper.turn_off()
+
+        if self.drive_joystick.getRawButton(11):
+            self.arm.extend()
+        else:
+            self.arm.retract()
 
 
 if __name__ == '__main__':
