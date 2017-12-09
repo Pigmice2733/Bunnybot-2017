@@ -53,8 +53,8 @@ class Robot(MagicRobot):
 
     def teleopPeriodic(self):
         self.drivetrain.turn_at(
-            self.drive_joystick.getRawAxis(0), squaredInputs=True)
-        self.drivetrain.forward_at(self.drive_joystick.getRawAxis(1))
+            -self.drive_joystick.getRawAxis(0), squaredInputs=True)
+        self.drivetrain.forward_at(-self.drive_joystick.getRawAxis(1))
 
         if self.drive_joystick.getRawButton(4):
             self.intake.spit_bunny()

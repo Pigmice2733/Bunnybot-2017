@@ -12,8 +12,8 @@ class PhysicsEngine:
     def update_sim(self, hal_data, now, tm_diff):
         """ Updates the simulation with new robot positions """
 
-        front_left = hal_data['CAN'][1]['value']
-        front_right = -hal_data['CAN'][3]['value']
+        front_left = -hal_data['CAN'][1]['value']
+        front_right = hal_data['CAN'][3]['value']
 
         # CAN outputs to the hal are multiplied by the duty cycle, 1023
         talon_duty_cycle = 1023

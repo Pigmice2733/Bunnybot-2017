@@ -14,7 +14,7 @@ __all__ = ["Drivetrain"]
 class Drivetrain:
     robot_drive = wpilib.RobotDrive
     gyro = wpilib.ADXRS450_Gyro
-    front_left_motor = ctre.CANTalon
+    arm_motor = ctre.CANTalon
 
     def __init__(self):
         self.rotation = 0
@@ -32,7 +32,7 @@ class Drivetrain:
         if squaredInputs:
             self.rotation = speed**2 if speed >= 0 else -(speed**2)
 
-    def forward(self, feet=0, inches=0, meters=0):
+    def forward(self, feet=0, inches=0, meters=0, max_speed=1):
         """Use a motion profile and PID control to efficiently
          move the robot the specified distance forward
 
@@ -40,7 +40,9 @@ class Drivetrain:
          `cancel_motion_profile`, then call again to change target.
 
         Returns `False` while executing, `True` once done. Continuing
-         to update when done will start new profile."""
+         to update when done will start new profile.
+
+        `max_speed` is in units of meters per second"""
         # 1 inch = 0.0254 meters
         # 1 foot = 0.3048 meters
         distance = (inches * 0.0254) + (feet * 0.3048) + meters
@@ -60,22 +62,22 @@ class Drivetrain:
         motion_profile = MotionProfile(
             acceleration_time=1,
             deceleration_time=1,
-            max_speed=1.2,
+            max_speed=max_speed,
             target_distance=distance)
 
-        coefs = PIDCoefficients(p=1.0, i=0.0, d=0.0)
+        coefs = PIDCoefficients(p=1.5, i=0.6, d=0.0)
 
         # Set current position to zero
         self._reset_encoder_position()
 
         self.profile_executor = ProfileExecutor(
             coefs, motion_profile,
-            lambda: self._get_encoder_position() * self.wheel_circumference_meters,
-            lambda output: self.forward_at(-output), 0.08)
+            lambda: (self._get_encoder_position()/360) * self.wheel_circumference_meters,
+            lambda output: self.forward_at(output), 0.01)
 
         return False
 
-    def backward(self, feet=0, inches=0, meters=0):
+    def backward(self, feet=0, inches=0, meters=0, max_speed=1):
         """Use a motion profile and PID control to efficiently
          move the robot the specified distance backward
 
@@ -83,10 +85,12 @@ class Drivetrain:
          `cancel_motion_profile`, then call again to change target.
 
         Returns `False` while executing, `True` once done. Continuing
-         to update when done will start new profile."""
-        return self.forward(-feet, -inches, -meters)
+         to update when done will start new profile.
 
-    def rotate(self, degrees=0):
+        `max_speed` is in units of meters per second"""
+        return self.forward(-feet, -inches, -meters, max_speed)
+
+    def rotate(self, degrees=0, max_speed=5):
         """Use a motion profile and PID control to efficiently
          turn the robot the number of degrees - positive is clockwise,
          negative is counter-clockwise
@@ -95,7 +99,9 @@ class Drivetrain:
          `cancel_motion_profile`, then call again to change target.
 
         Returns `False` while executing, `True` once done. Continuing
-         to update when done will start new profile."""
+         to update when done will start new profile.
+
+        `max_speed` is in units of degrees per second"""
         radians = degrees * (math.pi / 180)
 
         # When called with the same arguments, update executor
@@ -110,21 +116,22 @@ class Drivetrain:
         self.profile_arguments = radians
 
         motion_profile = MotionProfile(
-            acceleration_time=1,
-            deceleration_time=1,
-            max_speed=0.6,
+            acceleration_time=0.7,
+            deceleration_time=1.4,
+            max_speed=max_speed,
             target_distance=radians)
 
         self._zero_gyro()
 
-        coefs = PIDCoefficients(p=1.0, i=0.1, d=0.0)
+        coefs = PIDCoefficients(p=0.85, i=0.3, d=0.08)
         self.profile_executor = ProfileExecutor(
             coefs, motion_profile, lambda: self._get_gyro_angle(),
-            lambda output: self.turn_at(output), 0.001)
+            lambda output: self.turn_at(-output), 0.003)
 
         return False
 
-    def cancel_motion_profile(self):
+    def reset_motion_profile(self):
+        # Resets or cancels motion profile
         self.profile_executor = None
         self.profile_arguments = None
 
@@ -134,22 +141,25 @@ class Drivetrain:
         self.rotation = 0
         self.forward_speed = 0
 
+    def on_disabled(self):
+        self.cancel_motion_profile()
+
     def _reset_encoder_position(self):
-        self.front_left_motor.setEncPosition(0)
+        self.arm_motor.setEncPosition(0)
 
     def _get_encoder_position(self):
-        edges_per_revolution = 4
-        return -self.front_left_motor.getEncPosition() / edges_per_revolution
+        ticks_per_revolution = 11.3
+        return self.arm_motor.getEncPosition() / ticks_per_revolution
 
     def _zero_gyro(self):
         self.gyro_offset = self.gyro.getAngle()
 
     def _get_gyro_angle(self):
-        return (self.gyro.getAngle() - self.gyro_offset) * (math.pi / 180.0)
+        return (self.gyro.getAngle() - self.gyro_offset) * (math.pi / 180.0) * 1.013
 
     def _update_executor(self):
         executor_finished = self.profile_executor.update()
         if executor_finished:
-            self.cancel_motion_profile()
+            self.reset_motion_profile()
             return True
         return False
