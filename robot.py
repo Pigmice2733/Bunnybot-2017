@@ -4,8 +4,8 @@ import wpilib
 from ctre.cantalon import CANTalon
 from magicbot import MagicRobot
 
-from components.bunnygrabber import BunnyGrabber
 from components.drivetrain import Drivetrain
+from components.intake import Intake
 from components.flipper import Flipper
 from components.arm import Arm
 
@@ -13,7 +13,7 @@ from components.arm import Arm
 class Robot(MagicRobot):
 
     drivetrain = Drivetrain
-    bunnygrabber = BunnyGrabber
+    intake = Intake
     flipper = Flipper
     arm = Arm
 
@@ -39,7 +39,11 @@ class Robot(MagicRobot):
         self.arm_motor = CANTalon(5)
 
         self.drivetrain_gyro = wpilib.ADXRS450_Gyro()
-        self.bunny_motor = wpilib.Talon(0)
+
+        # Intake
+        self.intake_motor = CANTalon(6)
+        self.intake_pdp_channel = 0
+        self.pdp = wpilib.PowerDistributionPanel()
 
         self.flipper_motor = wpilib.Talon(1)
 
@@ -53,9 +57,7 @@ class Robot(MagicRobot):
         self.drivetrain.forward_at(self.drive_joystick.getRawAxis(1))
 
         if self.drive_joystick.getRawButton(4):
-            self.bunny_grabber.set_forward()
-        elif self.drive_joystick.getRawButton(5):
-            self.bunny_grabber.set_backward()
+            self.intake.spit_bunny()
 
         if self.drive_joystick.getRawButton(1):
             self.flipper.turn_on()
